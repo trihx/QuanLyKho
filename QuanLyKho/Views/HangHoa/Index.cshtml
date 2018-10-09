@@ -1,0 +1,180 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "Index";
+}
+    <form id="frmHangHoa">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <h3 class="text-primary">HÀNG HÓA</h3>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <button id="btnCreate" type="button" class="btn btn-lg btn-success" data-toggle="modal" data-target="#createModal">Thêm mới</button>
+                <button type="button" id="btnReload" class="btn btn-lg btn-primary">Làm mới dữ liệu</button>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                @*Datatable*@
+                <table id="listNhom" class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                Nhóm hàng hóa
+                            </th>
+                            <th>
+                                Mã hàng hóa
+                            </th>
+                            <th>
+                                Tên hàng hóa
+                            </th>
+                            <th>
+                                Sửa
+                            </th>
+
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+
+                </table>
+
+            </div>
+        </div>
+
+        @*createModal*@
+        <div class="modal fade" id="createModal" role="dialog" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Thêm/Cập nhật hàng hóa</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group row">
+                            <div class="col-xs-4">
+                               <label>Mã nhóm hàng hóa</label>
+                                <div class="tt-container">
+                                   <input id="MaNhomHangHoa" type="text" value="" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-xs-8">
+                                <label>Tên nhóm hàng hóa</label>
+                                <div class="tt-container">
+                                    <input id="TenNhomHangHoa" type="text" value="" class="form-control" />
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+                            <label>Mã hàng hóa</label>
+                            <input id="MaHangHoa"  type="text" value="" class="form-control" />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Tên hàng hóa</label>
+                            <input id="TenHangHoa" type="text" value="" class="form-control" />
+                        </div>
+
+                        <div id="divError" class="alert alert-danger collapse">
+                            <a id="linkClose" class="close" href="#">&times;</a>
+                            <div id="divErrorText">
+
+                            </div>
+                        </div>
+                        <label id="Id" class="hidden"></label>
+                        <label id="NhomHangHoa_Id" class="hidden"></label>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button  id="btnSave" class="btn btn-primary">Lưu</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+
+@section scripts {
+    <script src="~/Scripts/DTO/HangHoa.js"></script>
+    <script src="~/Scripts/DTO/variables.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            var vm = {};
+
+            hideErrorDiv();
+            loadTable();
+
+            $("#MaNhomHangHoa").typeahead(
+                {
+                    highlight: true
+                }
+                , {
+                    name: 'NhomHangHoa',
+                    display: 'MaNhomHangHoa',
+                    source: manhom
+                }).on("typeahead:select", function (e, nhomhanghoa) {
+                    vm.Id = nhomhanghoa.Id;
+                    $("#TenNhomHangHoa").val(nhomhanghoa.TenNhomHangHoa);
+                    $("#MaHangHoa").focus();
+                });
+
+
+            $("#TenNhomHangHoa").typeahead(
+                {
+                    
+                    highlight: true
+                }
+                , {
+                    name: 'tennhom',
+                    display: 'TenNhomHangHoa',
+                    source: tennhom
+                }).on("typeahead:select", function (e, nhomhanghoa) {
+                    vm.Id = nhomhanghoa.Id;
+                    $("#MaNhomHangHoa").val(nhomhanghoa.MaNhomHangHoa);
+                    $("#MaHangHoa").focus();
+                });
+
+
+            
+
+            $("#linkClose").click(function () {
+                $("#divError").hide("fade");
+            });
+
+            //Save nhom hang hoa
+            $("#btnCreate").click(function () {
+                clear();
+                hideErrorDiv();
+                $("#Id").val(0);
+                
+            });
+            $("#frmHangHoa").submit(function (e) {
+                e.preventDefault();
+                SaveData(vm.Id);
+            });
+            
+
+            $("#btnReload").click(function () {
+                loadTable();
+            });
+
+            // edit nhom hang hoa
+            $("#listNhom").on("click", ".js-edit", function () {
+                loadNhomId($(this).attr("data-hang-id"), vm.Id);
+                hideErrorDiv();
+            });
+           
+
+        });
+
+    </script>
+
+}
+

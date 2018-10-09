@@ -1,0 +1,4 @@
+PM>enable-migrations -ContextTypeName [ContextName]
+Rename Configurations.cs file
+PM>add-migration -ConfigurationTypeName [renamed config file] [migration name]
+PN> update-database -ConfigurationTypeName [renamed config file]
